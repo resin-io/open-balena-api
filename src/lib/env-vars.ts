@@ -66,7 +66,6 @@ export const BLACKLISTED_NAMES = [
 ];
 
 export const INVALID_CHARACTER_REGEX = /^\d|\W/;
-export const INVALID_NEWLINE_REGEX = /\r|\n/;
 
 // Note that this list will be mutated by the cloud API to add
 // extra variables as for cloud-only features.
@@ -183,14 +182,6 @@ export const checkEnvVarNameValidity = (name: string) => {
 			`Environment variables beginning with ${RESERVED_NAMESPACES.join(
 				', ',
 			)} are reserved.`,
-		);
-	}
-};
-
-export const checkEnvVarValueValidity = (value: string) => {
-	if (INVALID_NEWLINE_REGEX.test(value)) {
-		throw new BadRequestError(
-			'Variable values cannot contain line break characters',
 		);
 	}
 };

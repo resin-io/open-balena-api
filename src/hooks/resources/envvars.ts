@@ -4,7 +4,6 @@ import { Tx, getCurrentRequestAffectedIds } from '../../platform';
 import {
 	checkEnvVarNameValidity,
 	checkConfigVarNameValidity,
-	checkEnvVarValueValidity,
 } from '../../lib/env-vars';
 import { postDevices } from '../../lib/device-proxy';
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
@@ -89,21 +88,15 @@ const addEnvHooks = (
 	sbvrUtils.addPureHook('DELETE', 'resin', resource, envVarHook);
 };
 
-const checkConfigVarValidity: ValidateFn = (varName, varValue) => {
+const checkConfigVarValidity: ValidateFn = varName => {
 	if (varName != null) {
 		checkConfigVarNameValidity(varName);
 	}
-	if (varValue != null) {
-		checkEnvVarValueValidity(varValue);
-	}
 };
 
-const checkEnvVarValidity: ValidateFn = (varName, varValue) => {
+const checkEnvVarValidity: ValidateFn = varName => {
 	if (varName != null) {
 		checkEnvVarNameValidity(varName);
-	}
-	if (varValue != null) {
-		checkEnvVarValueValidity(varValue);
 	}
 };
 
