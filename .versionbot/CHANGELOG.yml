@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add v3 state-get endpoint
+      hash: f7eabf11303ad7043176bd6692521ff1b2f8134c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.145.1
+  date: 2021-07-15T16:34:12.922Z
+- commits:
     - subject: Allow creating/using a rate limiter that is separate from a middleware
       hash: a13cc9f1f7f0652f412de59e58c3c5f315e59c09
       body: ''
