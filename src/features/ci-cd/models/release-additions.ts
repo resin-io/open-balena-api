@@ -5,12 +5,24 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 		fieldName: 'is final',
 		dataType: 'Boolean',
 		required: true,
-		// TODO[release versioning next step]: Change to:
-		// computed: ['Exists', ['ReferencedField', 'release', 'revision']],
 		computed: [
 			'Equals',
 			['ReferencedField', 'release', 'release type'],
 			['EmbeddedText', 'final'],
+		],
+	});
+
+	abstractSql.tables['release'].fields.push({
+		fieldName: 'semver',
+		dataType: 'Short Text',
+		required: true,
+		computed: [
+			'Concatenate',
+			['ReferencedField', 'release', 'semver major'],
+			['EmbeddedText', '.'],
+			['ReferencedField', 'release', 'semver minor'],
+			['EmbeddedText', '.'],
+			['ReferencedField', 'release', 'semver patch'],
 		],
 	});
 };

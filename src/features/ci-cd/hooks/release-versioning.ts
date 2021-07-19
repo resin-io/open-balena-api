@@ -87,6 +87,7 @@ const PLAIN_SEMVER_REGEX = /^([0-9]+)\.([0-9]+)\.([0-9]+)$/;
 
 interface CustomObjectBase {
 	is_final?: boolean;
+	semver?: string;
 }
 
 const parseReleaseVersioningFields: (args: sbvrUtils.HookArgs) => void = ({
@@ -129,20 +130,23 @@ const parseReleaseVersioningFields: (args: sbvrUtils.HookArgs) => void = ({
 		request.values.semver_patch = parseInt(semverMatches[3], 10);
 	}
 
-	// Keep is_final as a custom value and remove it from the body,
-	// since is_final is computed and doesn't exist in the DB.
+	// Keep computed terms as custom values and remove them from the body,
+	// since they do not exist in the DB.
 	const custom = request.custom as CustomObjectBase;
 	custom.is_final = request.values.is_final;
+	custom.semver = request.values.semver;
 	delete request.values.is_final;
+	delete request.values.semver;
 };
+
+const DEFAULT_SEMVER = '0.0.0';
 
 hooks.addPureHook('POST', 'resin', 'release', {
 	POSTPARSE: async (args) => {
 		parseReleaseVersioningFields(args);
 
 		const { request } = args;
-		if (request.values.semver === undefined) {
-			request.values.semver = '0.0.0';
+		if (request.custom.semver == null) {
 			request.values.semver_major = 0;
 			request.values.semver_minor = 0;
 			request.values.semver_patch = 0;
@@ -162,7 +166,7 @@ hooks.addPureHook('POST', 'resin', 'release', {
 		const revision = await getNextRevision(
 			api,
 			request.values.belongs_to__application,
-			request.values.semver,
+			custom.semver ?? DEFAULT_SEMVER,
 		);
 		await api.patch({
 			resource: 'release',
@@ -194,7 +198,8 @@ hooks.addPureHook('PATCH', 'resin', 'release', {
 		parseReleaseVersioningFields(args);
 
 		const { request } = args;
-		if (request.values.semver !== undefined) {
+		const { semver } = request.custom as PatchCustomObject;
+		if (semver != null) {
 			// So that we don't have duplicate 0's.
 			// We will set the correct value in PRERESPOND
 			request.values.revision = null;
@@ -214,7 +219,7 @@ hooks.addPureHook('PATCH', 'resin', 'release', {
 				},
 			});
 		}
-		if (request.values.semver != null) {
+		if (custom.semver != null) {
 			filters.push({
 				$or: {
 					// Check both fields, so that instances of this deploy step, can work with instances of the next step.
@@ -222,7 +227,7 @@ hooks.addPureHook('PATCH', 'resin', 'release', {
 					// TODO[release versioning next step]: Drop this after re-migrating all data on step 2:
 					release_type: 'final',
 				},
-				semver: { $ne: request.values.semver },
+				semver: { $ne: custom.semver },
 			});
 		}
 		if (request.values.belongs_to__application != null) {
@@ -279,7 +284,7 @@ hooks.addPureHook('PATCH', 'resin', 'release', {
 		custom.releasesToSetRevision = releasesToSetRevision;
 	},
 	PRERESPOND: async ({ api, request, tx }) => {
-		const { is_final, releasesToSetRevision } =
+		const { is_final, releasesToSetRevision, semver } =
 			request.custom as PatchCustomObject;
 		if (releasesToSetRevision == null) {
 			return;
@@ -303,12 +308,8 @@ hooks.addPureHook('PATCH', 'resin', 'release', {
 
 		await Promise.all(
 			entries.map(async ([appId, releases]) => {
-				if (request.values.semver != null) {
-					const nextRevision = await getNextRevision(
-						api,
-						appId,
-						request.values.semver,
-					);
+				if (semver != null) {
+					const nextRevision = await getNextRevision(api, appId, semver);
 					await Promise.all(
 						releases.map(async (release, index) => {
 							await api.patch({

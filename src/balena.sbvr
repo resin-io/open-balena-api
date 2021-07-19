@@ -255,9 +255,6 @@ Term: start timestamp
 Term: status
 	Concept Type: Short Text (Type)
 
-Term: semver
-	Concept Type: Short Text (Type)
-
 Term: semver major
 	Concept Type: Integer (Type)
 
@@ -666,8 +663,6 @@ Fact type: release has release type
 	Definition: "final" or "draft"
 Fact type: release is finalized at date
 	Necessity: each release is finalized at at most one date.
-Fact type: release has semver
-	Necessity: each release has exactly one semver.
 Fact type: release has semver major
 	Necessity: each release has exactly one semver major.
 Fact type: release has semver minor
