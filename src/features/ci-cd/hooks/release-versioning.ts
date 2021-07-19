@@ -128,6 +128,13 @@ const parseReleaseVersioningFields: (args: sbvrUtils.HookArgs) => void = ({
 		request.values.semver_major = parseInt(semverMatches[1], 10);
 		request.values.semver_minor = parseInt(semverMatches[2], 10);
 		request.values.semver_patch = parseInt(semverMatches[3], 10);
+	} else {
+		// the semver part fields are only settable through the computed term
+		['semver_major', 'semver_minor', 'semver_patch'].forEach((semverPart) => {
+			if (request.values[semverPart] != null) {
+				delete request.values[semverPart];
+			}
+		});
 	}
 
 	// Keep computed terms as custom values and remove them from the body,
@@ -146,12 +153,6 @@ hooks.addPureHook('POST', 'resin', 'release', {
 		parseReleaseVersioningFields(args);
 
 		const { request } = args;
-		if (request.custom.semver == null) {
-			request.values.semver_major = 0;
-			request.values.semver_minor = 0;
-			request.values.semver_patch = 0;
-		}
-
 		const custom = request.custom as CustomObjectBase;
 		// Releases are by final by default
 		custom.is_final ??= true;
