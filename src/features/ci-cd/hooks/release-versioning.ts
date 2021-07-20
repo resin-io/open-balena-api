@@ -188,17 +188,7 @@ interface PatchCustomObject extends CustomObjectBase {
 }
 
 hooks.addPureHook('PATCH', 'resin', 'release', {
-	POSTPARSE: async (args) => {
-		parseReleaseVersioningFields(args);
-
-		const { request } = args;
-		const { semver } = request.custom as PatchCustomObject;
-		if (semver != null) {
-			// So that we don't have duplicate 0's.
-			// We will set the correct value in PRERESPOND
-			request.values.revision = null;
-		}
-	},
+	POSTPARSE: parseReleaseVersioningFields,
 	PRERUN: async (args) => {
 		const { api, request } = args;
 		const custom = request.custom as PatchCustomObject;
@@ -276,6 +266,27 @@ hooks.addPureHook('PATCH', 'resin', 'release', {
 			return;
 		}
 		custom.releasesToSetRevision = releasesToSetRevision;
+
+		if (custom.semver == null) {
+			return;
+		}
+		// When changing the semver, set the revision to null so that
+		// we don't end up with duplicate revisions.
+		// We will set the correct value in PRERESPOND
+		await api.patch({
+			resource: 'release',
+			// Needs root because revision is not settable.
+			passthrough: { req: permissions.root },
+			options: {
+				$filter: {
+					id: { $in: releasesToSetRevision.map((r) => r.id) },
+					revision: { $ne: null },
+				},
+			},
+			body: {
+				revision: null,
+			},
+		});
 	},
 	PRERESPOND: async ({ api, request, tx }) => {
 		const { is_final, releasesToSetRevision, semver } =
