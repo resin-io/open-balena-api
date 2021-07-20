@@ -92,7 +92,6 @@ interface CustomObjectBase {
 
 const parseReleaseVersioningFields: (args: sbvrUtils.HookArgs) => void = ({
 	request,
-	req,
 }) => {
 	const { is_final, release_type } = request.values;
 	if (typeof is_final === 'boolean') {
@@ -111,13 +110,6 @@ const parseReleaseVersioningFields: (args: sbvrUtils.HookArgs) => void = ({
 		// TODO[release versioning next step]: Drop this once we move the release_type to a translation
 		request.values.is_final =
 			releaseTypeToFinalMap[release_type as keyof typeof releaseTypeToFinalMap];
-	}
-
-	if (
-		request.values.is_final === true ||
-		(req.method === 'POST' && request.values.is_final === undefined)
-	) {
-		request.values.is_finalized_at__date = new Date();
 	}
 
 	if (request.values.semver != null) {
@@ -176,6 +168,7 @@ hooks.addPureHook('POST', 'resin', 'release', {
 			id: releaseId,
 			body: {
 				revision,
+				is_finalized_at__date: new Date(),
 			},
 		});
 		// In case { returnResource: false } was not used
