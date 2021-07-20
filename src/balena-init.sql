@@ -166,3 +166,7 @@ ON "image" USING GIN ("is stored at-image location" gin_trgm_ops);
 -- Optimization for device state query
 CREATE INDEX IF NOT EXISTS "release_id_belongs_to_app_idx"
 ON "release" ("id", "belongs to-application");
+
+-- Optimization for the app-semver-revision uniqueness rule and for computing the next revision
+CREATE INDEX IF NOT EXISTS "release_belongs_to_app_revision_semver_idx"
+ON "release" ("belongs to-application", "revision", "semver major", "semver minor", "semver patch");
