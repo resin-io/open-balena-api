@@ -1,4 +1,43 @@
 - commits:
+    - subject: 'release versioning: Read only the new fields but keep setting both'
+      hash: 9541c392fef94036a9e75de2f8b108224a8df3f6
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        HQ: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        hq: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: 'release versioning: Migrate records, set both & read only the new fields'
+      hash: aa93b6c436be9db809acfabf1173237bf7cab160
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        HQ: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        hq: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: 'release versioning: Add and start setting the semver & revision fields'
+      hash: 9530adaec595a76d3810d2e859c9bceb7b519810
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        HQ: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        hq: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.148.0
+  date: 2021-07-20T14:45:57.172Z
+- commits:
     - subject: Use `res.status(...).end()` in preference to `res.sendStatus()`
       hash: 4d78c721067aba3e4d8fd7c9d1f8a04baa5a422f
       body: |
